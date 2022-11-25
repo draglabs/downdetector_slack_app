@@ -1,7 +1,7 @@
 import { App } from "@slack/bolt";
 
 export enum SlashCommands {
-    GREET = "/greet"
+    REGISTER = "/register"
 }
 
 export enum DefaultBotSettings {
