@@ -58,6 +58,7 @@ app.command(SlashCommands.GREET, async({body, ack}) => {
 
 export async function handler(event: APIGatewayEvent, context: Context): Promise<IHandlerResponse> {
   const payload: any = parseRequestBody(event.body, event.headers["content-type"]);
+  console.log("Received: ", payload);
 
   if(isUrlVerificationRequest(payload)) {
     return {
