@@ -37,3 +37,10 @@ export async function addSite(url: string, channelId: string) {
     channelId,
   });
 }
+
+export async function listSites() {
+  const querySnapshot = await getDocs(sitesCollection);
+  return querySnapshot.docs.map(
+    (doc) => doc.data() as { url: string; channelId: string }
+  );
+}

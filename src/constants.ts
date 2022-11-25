@@ -1,34 +1,36 @@
 import { App } from "@slack/bolt";
 
 export enum SlashCommands {
-    REGISTER = "/register"
+  REGISTER = "/register",
+  LIST = "/list",
 }
 
 export enum DefaultBotSettings {
-    REACTION = ":robot_face:",
-    MESSAGE = "Hello!"
+  REACTION = ":robot_face:",
+  MESSAGE = "Hello!",
 }
 
 interface IBaseSlackReply {
-    app: App;
-    botToken: string | undefined;
-    channelId: string;
-    threadTimestamp: string;
+  app: App;
+  botToken: string | undefined;
+  channelId: string;
+  threadTimestamp: string;
 }
 
 export interface ISlackReactionReply extends IBaseSlackReply {
-    reaction: string;
+  reaction: string;
 }
 
 export interface ISlackReply extends IBaseSlackReply {
-    message: string;
+  message: string;
 }
 
-export interface ISlackPrivateReply extends Omit<ISlackReply, "threadTimestamp"> {
-    userId: string;
+export interface ISlackPrivateReply
+  extends Omit<ISlackReply, "threadTimestamp"> {
+  userId: string;
 }
 
 export interface IHandlerResponse {
-    statusCode: number;
-    body: string;
+  statusCode: number;
+  body: string;
 }

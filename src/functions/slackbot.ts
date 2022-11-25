@@ -8,7 +8,7 @@ import {
   ISlackReply,
   SlashCommands,
 } from "../constants";
-import { addSite, checkIfSiteRegistered } from "../firebase";
+import { addSite, checkIfSiteRegistered, listSites } from "../firebase";
 import {
   generateReceiverEvent,
   isUrlVerificationRequest,
@@ -51,6 +51,22 @@ app.message(async ({ message }) => {
   await replyMessage(messagePacket);
 });
 
+app.command(SlashCommands.LIST, async ({ body, ack }) => {
+  ack();
+  const sites = await listSites();
+  let message = "Registered sites:";
+  sites.forEach((site) => {
+    message += `\n${site.url}`;
+  });
+  console.log(message);
+  replyMessage({
+    app: app,
+    botToken: process.env.SLACK_BOT_TOKEN,
+    channelId: body.channel_id,
+    threadTimestamp: body.ts,
+    message: message,
+  });
+});
 app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
   ack();
 
