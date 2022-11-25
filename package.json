@@ -1,0 +1,32 @@
+{
+  "name": "downdetector_slack_app",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "go": "netlify dev --live"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/draglabs/downdetector_slack_app.git"
+  },
+  "author": "Felipe Martinez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/draglabs/downdetector_slack_app/issues"
+  },
+  "homepage": "https://github.com/draglabs/downdetector_slack_app#readme",
+  "dependencies": {
+    "@slack/bolt": "^3.12.2",
+    "@types/aws-lambda": "^8.10.109",
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "chai": "^4.3.7",
+    "dotenv": "^16.0.3",
+    "mocha": "^10.1.0",
+    "sinon": "^14.0.2",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^4.9.3"
+  }
+}
