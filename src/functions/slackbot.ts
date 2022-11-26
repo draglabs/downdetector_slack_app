@@ -56,9 +56,8 @@ app.command(SlashCommands.LIST, async ({ body, ack }) => {
   const sites = await listSites();
   let message = "Registered sites:";
   sites.forEach((site) => {
-    message += `\n${site.url}`;
+    message += `\n\t${site.url}`;
   });
-  console.log(message);
   replyMessage({
     app: app,
     botToken: process.env.SLACK_BOT_TOKEN,
@@ -78,7 +77,7 @@ app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
       botToken: process.env.SLACK_BOT_TOKEN,
       channelId: body.channel_id,
       userId: body.user_id,
-      message: `Error registering, ${body.text} is not a valid url`,
+      message: `Error registering, '${body.text}' is not a valid url`,
     });
   }
   let isRegistered: boolean = true;
@@ -90,7 +89,7 @@ app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
         botToken: process.env.SLACK_BOT_TOKEN,
         channelId: body.channel_id,
         userId: body.user_id,
-        message: "Site is already registered",
+        message: `Site ${body.text} is already registered`,
       });
     }
     await addSite(body.text, body.channel_id);
@@ -107,7 +106,7 @@ app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
       botToken: process.env.SLACK_BOT_TOKEN,
       channelId: body.channel_id,
       userId: body.user_id,
-      message: `Error registering, ${error}`,
+      message: `Error registering ${body.text}, ${error}`,
     });
   }
 });
