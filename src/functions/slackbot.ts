@@ -20,6 +20,12 @@ import {
 
 dotenv.config();
 
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
 const expressReceiver: ExpressReceiver = new ExpressReceiver({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
   processBeforeResponse: true,
@@ -31,24 +37,26 @@ const app: App = new App({
   receiver: expressReceiver,
 });
 
-app.message(async ({ message }) => {
-  const reactionPacket: ISlackReactionReply = {
-    app: app,
-    botToken: process.env.SLACK_BOT_TOKEN,
-    channelId: message.channel,
-    threadTimestamp: message.ts,
-    reaction: "robot_face",
-  };
-  await replyReaction(reactionPacket);
+app.message(async ({ message, context, event, payload, say, ack }) => {
+  await sleep(3000);
+  await say("Hello there!");
+  // const reactionPacket: ISlackReactionReply = {
+  //   app: app,
+  //   botToken: process.env.SLACK_BOT_TOKEN,
+  //   channelId: message.channel,
+  //   threadTimestamp: message.ts,
+  //   reaction: "robot_face",
+  // };
+  // await replyReaction(reactionPacket);
 
-  const messagePacket: ISlackReply = {
-    app: app,
-    botToken: process.env.SLACK_BOT_TOKEN,
-    channelId: message.channel,
-    threadTimestamp: message.ts,
-    message: "Hello :wave:",
-  };
-  await replyMessage(messagePacket);
+  // const messagePacket: ISlackReply = {
+  //   app: app,
+  //   botToken: process.env.SLACK_BOT_TOKEN,
+  //   channelId: message.channel,
+  //   threadTimestamp: message.ts,
+  //   message: "Hello :wave:",
+  // };
+  // await replyMessage(messagePacket);
 });
 
 app.command(SlashCommands.LIST, async ({ body, ack }) => {
@@ -115,6 +123,7 @@ export async function handler(
   event: APIGatewayEvent,
   context: Context
 ): Promise<IHandlerResponse> {
+  console.log("----------Slackbot----------", new Date().toISOString())
   const payload: any = parseRequestBody(
     event.body,
     event.headers["content-type"]
