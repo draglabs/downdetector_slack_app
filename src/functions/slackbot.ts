@@ -176,6 +176,7 @@ app.action("list-action", async ({ ack, payload, client, body }) => {
 
 app.action("register-action", async ({ ack, payload, client, body }) => {
   await ack();
+  console.log("register-action", body)
   try {
     const result = await client.views.publish({
       user_id: body.user.id,
@@ -186,6 +187,14 @@ app.action("register-action", async ({ ack, payload, client, body }) => {
   } catch (error) {
     console.error(error);
   }
+});
+app.action("register-action-confirm", async ({ ack, payload, client, body }) => {
+  await ack();
+  const ubody: any = body;
+  const values = ubody?.view?.state?.values;
+
+  const url = (values['site-url'] ?? {})['site-url-value'];
+  console.log(url)
 });
 
 export async function handler(
