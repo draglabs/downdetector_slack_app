@@ -18,7 +18,11 @@ export function parseRequestBody(stringBody: string | null, contentType: string 
             let individualKeyValuePair: string[] = pair.split("=");
             result[individualKeyValuePair[0]] = decodeURIComponent(individualKeyValuePair[1] || "");
         });
-        return JSON.parse(JSON.stringify(result));
+        result = JSON.parse(JSON.stringify(result))
+        if (result.payload) {
+            return JSON.parse(JSON.stringify(JSON.parse(result.payload)))
+        }
+        return result;
 
     } catch {
         return "";

@@ -57,7 +57,9 @@ export async function handler(
   fetch(`${assembleUrl(event)}/.netlify/functions/slackbot`, {
     body: event.body,
     method: "POST",
-    headers: event.headers as any,
+    headers: {
+      "Content-Type": event.headers["content-type"] || "application/json",
+    },
   }).catch((err) => console.error(err));
   await sleep(1000);
 

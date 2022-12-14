@@ -17,6 +17,9 @@ import {
   replyPrivateMessage,
   replyReaction,
 } from "../utils";
+import Home from "../views/home";
+import List from "../views/list";
+import Register from "../views/register";
 
 dotenv.config();
 
@@ -37,7 +40,7 @@ const app: App = new App({
   receiver: expressReceiver,
 });
 
-app.message(async ({ message, context, event, payload, say, ack }) => {
+app.message(async ({ say, payload }) => {
   await sleep(3000);
   await say("Hello there!");
   // const reactionPacket: ISlackReactionReply = {
@@ -60,7 +63,7 @@ app.message(async ({ message, context, event, payload, say, ack }) => {
 });
 
 app.command(SlashCommands.LIST, async ({ body, ack }) => {
-  ack();
+  await ack();
   const sites = await listSites();
   let message = "Registered sites:";
   sites.forEach((site) => {
@@ -74,8 +77,9 @@ app.command(SlashCommands.LIST, async ({ body, ack }) => {
     message: message,
   });
 });
+
 app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
-  ack();
+  await ack();
 
   try {
     new URL(body.text);
@@ -116,6 +120,71 @@ app.command(SlashCommands.REGISTER, async ({ body, ack }) => {
       userId: body.user_id,
       message: `Error registering ${body.text}, ${error}`,
     });
+  }
+});
+
+app.event("app_home_opened", async ({ payload, client, say }) => {
+  const userId = payload.user;
+
+  try {
+    await client.views.publish({
+      user_id: userId,
+      view: Home({ userId }),
+    });
+
+  } catch (error) {
+    console.error(error);
+    // await say("An error occurred while setting up the home tab");
+  }
+});
+
+app.action("home-action", async ({ ack, say, client, body }) => {
+  await ack();
+  try {
+    await client.views.publish({
+      user_id: body.user.id,
+      view: Home({ userId: body.user.id }),
+    });
+  } catch (error) {
+    console.error(error);
+    // await say("An error occurred while setting up the home tab");
+  }
+});
+
+app.action("list-action", async ({ ack, payload, client, body }) => {
+  await ack();
+  const sites = await listSites();
+  let ubody: any = body;
+
+  try {
+    const view = ubody?.view?.id || ubody?.container?.view_id;
+    if (view) {
+      await client.views.update({
+        view_id: view,
+        view: List({ sites }),
+      });
+    } else {
+      await client.views.publish({
+        user_id: body.user.id,
+        view: List({ sites }),
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+app.action("register-action", async ({ ack, payload, client, body }) => {
+  await ack();
+  try {
+    const result = await client.views.publish({
+      user_id: body.user.id,
+      view: Register({ urls: [] }),
+    });
+
+    console.log(result);
+  } catch (error) {
+    console.error(error);
   }
 });
 
