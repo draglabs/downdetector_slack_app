@@ -54,16 +54,12 @@ export async function handler(
 
   const slackEvent: ReceiverEvent = generateReceiverEvent(payload);
   await app.processEvent(slackEvent);
-  try {
-    fetch(`${assembleUrl(event)}/.netlify/functions/slackbot`, {
-      body: event.body,
-      method: "POST",
-      headers: event.headers as any,
-    });
-    await sleep(1000);
-  } catch (error) {
-    console.error(error);
-  }
+  fetch(`${assembleUrl(event)}/.netlify/functions/slackbot`, {
+    body: event.body,
+    method: "POST",
+    headers: event.headers as any,
+  }).catch((err) => console.error(err));
+  await sleep(1000);
 
   return {
     statusCode: 200,
