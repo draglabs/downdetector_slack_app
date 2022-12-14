@@ -10,10 +10,6 @@ import {
 
 dotenv.config();
 
-const SLACK_BOT_ENDPOINT =
-  process.env.SLACK_BOT_ENDPOINT ||
-  "http://localhost:8888/.netlify/functions/slackbot";
-
 const expressReceiver: ExpressReceiver = new ExpressReceiver({
   signingSecret: `${process.env.SLACK_SIGNING_SECRET}`,
   processBeforeResponse: true,
@@ -28,6 +24,13 @@ const app: App = new App({
 app.message(async ({ say }) => {
   await say("Processing...");
 });
+
+function assembleUrl(event: any) {
+  if (process.env.URL) {
+    return process.env.URL;
+  }
+  return `http://${event.headers.host}`;
+}
 
 export async function handler(
   event: APIGatewayEvent,
@@ -47,9 +50,9 @@ export async function handler(
 
   const slackEvent: ReceiverEvent = generateReceiverEvent(payload);
   await app.processEvent(slackEvent);
-
+  console.log(`${assembleUrl(event)}/.netlify/functions/slackbot`);
   try {
-    fetch(SLACK_BOT_ENDPOINT, {
+    fetch(`${assembleUrl(event)}/.netlify/functions/slackbot`, {
       body: event.body,
       method: "POST",
       headers: {
