@@ -31,7 +31,11 @@ function assembleUrl(event: any) {
   }
   return `http://${event.headers.host}`;
 }
-
+function sleep(ms: number) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
 export async function handler(
   event: APIGatewayEvent,
   context: Context
@@ -50,15 +54,13 @@ export async function handler(
 
   const slackEvent: ReceiverEvent = generateReceiverEvent(payload);
   await app.processEvent(slackEvent);
-  console.log(`${assembleUrl(event)}/.netlify/functions/slackbot`);
   try {
     fetch(`${assembleUrl(event)}/.netlify/functions/slackbot`, {
       body: event.body,
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-      },
+      headers: event.headers as any,
     });
+    await sleep(1000);
   } catch (error) {
     console.error(error);
   }

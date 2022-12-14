@@ -123,7 +123,6 @@ export async function handler(
   event: APIGatewayEvent,
   context: Context
 ): Promise<IHandlerResponse> {
-  console.log("----------Slackbot----------", new Date().toISOString())
   const payload: any = parseRequestBody(
     event.body,
     event.headers["content-type"]
