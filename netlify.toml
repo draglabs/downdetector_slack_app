@@ -4,5 +4,5 @@
 
 [[redirects]]
   from = "/slackbot/*"
-  to = "/.netlify/functions/router"
+  to = "/.netlify/functions/ack"
   status = 200

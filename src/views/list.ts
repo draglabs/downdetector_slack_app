@@ -1,5 +1,6 @@
 import Home from "./home";
 import { ViewFunction } from "./types";
+import { extendView } from "./utils";
 
 type Props = {
   sites: {
@@ -14,19 +15,13 @@ const List: ViewFunction<Props> = ({ sites }) => {
     .join("\n");
 
   const home = Home({});
-  return {
-    ...home,
-    blocks: [
-      ...home.blocks,
-      {
-        type: "section",
-        text: {
-          type: "mrkdwn",
-          text: `Here are your registered URLs:\n${urlsText}`,
-        },
-      },
-    ],
-  };
+  return extendView(home, {
+    type: "section",
+    text: {
+      type: "mrkdwn",
+      text: `Here are your registered URLs:\n${urlsText}`,
+    },
+  });
 };
 
 export default List;

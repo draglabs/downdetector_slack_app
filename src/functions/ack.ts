@@ -2,11 +2,12 @@ import { App, ExpressReceiver, ReceiverEvent } from "@slack/bolt";
 import { APIGatewayEvent, Context } from "aws-lambda";
 import * as dotenv from "dotenv";
 import { IHandlerResponse } from "../constants";
-import eventRoutes from "../router";
 import {
+  assembleUrl,
   generateReceiverEvent,
   isUrlVerificationRequest,
   parseRequestBody,
+  sleep,
 } from "../utils";
 
 dotenv.config();
@@ -22,7 +23,9 @@ const app: App = new App({
   receiver: expressReceiver,
 });
 
-eventRoutes(app);
+// app.message(async ({ say }) => {
+//   await say("Processing...");
+// });
 
 export async function handler(
   event: APIGatewayEvent,
@@ -42,6 +45,14 @@ export async function handler(
 
   const slackEvent: ReceiverEvent = generateReceiverEvent(payload);
   await app.processEvent(slackEvent);
+  fetch(`${assembleUrl(event)}/.netlify/functions/router`, {
+    body: event.body,
+    method: "POST",
+    headers: {
+      "Content-Type": event.headers["content-type"] || "application/json",
+    },
+  }).catch((err) => console.error(err));
+  await sleep(1000);
 
   return {
     statusCode: 200,
